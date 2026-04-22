@@ -87,26 +87,39 @@ app.use('/api/admin/finanzas/', financeLimiter);
 // ============================================================================
 // 3. CONEXIÓN A BASE DE DATOS (FIREBASE) CON REINTENTOS
 // ============================================================================
+// ============================================================================
+// 3. CONEXIÓN A BASE DE DATOS (FIREBASE)
+// ============================================================================
 let db;
 let messaging;
 
-const connectToFirebase = () => {
-    try {
-        const serviceAccount = require("./serviceAccountKey.json");
-        if (!admin.apps.length) {
-            admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
-        }
-        db = admin.firestore();
-        messaging = admin.messaging();
-        
-        // Optimización de Firestore
-        db.settings({ ignoreUndefinedProperties: true });
-        
-        Logger.success("Conexión a Firebase Firestore y Cloud Messaging establecida con éxito.");
-    } catch (e) {
-        Logger.error("Fallo crítico al conectar con Firebase. Verifique serviceAccountKey.json", e.message);
-        process.exit(1);
+try {
+    let serviceAccount;
+
+    // 1. Intentar cargar desde la variable de entorno de Render
+    if (process.env.FIREBASE_CREDENTIALS) {
+        serviceAccount = JSON.parse(process.env.FIREBASE_CREDENTIALS);
+    } 
+    // 2. Si no existe la variable (caso local en tu PC), buscar el archivo
+    else {
+        serviceAccount = require("./serviceAccountKey.json");
     }
+
+    if (!admin.apps.length) {
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
+        });
+    }
+    db = admin.firestore();
+    messaging = admin.messaging();
+    logger.success("Conexión a Firebase Firestore establecida correctamente.");
+} catch (e) {
+    // Si falla aquí, es porque no hay variable ni archivo
+    console.error("Fallo crítico al conectar con Firebase. Asegúrate de tener la variable FIREBASE_CREDENTIALS en Render o el archivo serviceAccountKey.json localmente.");
+    console.error("Error detalle:", e.message);
+    process.exit(1);
+
+
 };
 connectToFirebase();
 
