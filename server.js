@@ -730,12 +730,24 @@ class VideoQueueManager {
             ]);
 
             // FASE 4: Actualización en Base de Datos como COMPLETADO
+           // FASE 4: Actualización en Base de Datos como COMPLETADO
             await db.collection('novelas').doc(task.serieId).collection('episodios').doc(task.episodioId).update({
                 videoUrl: videoUrl,
                 portadaEpiUrl: thumbnailUrl,
                 estadoProceso: 'completado',
                 fechaFinProceso: admin.firestore.FieldValue.serverTimestamp()
             });
+
+            // FASE 4.5: AUTO-MINIATURA DE LA SERIE MAESTRA
+            // Si es el episodio 1 y la serie no tiene portada, usamos la que FFMPEG acaba de recortar.
+            if (Number(task.numeroEpisodio) === 1) {
+                const serieRef = db.collection('novelas').doc(task.serieId);
+                const serieDoc = await serieRef.get();
+                if (serieDoc.exists && !serieDoc.data().portadaUrl) {
+                    await serieRef.update({ portadaUrl: thumbnailUrl });
+                    Logger.success(`[WORKER] Auto-portada asignada a la serie maestra.`);
+                }
+            }
 
             Logger.success(`[WORKER COMPLETADO] Episodio [${task.episodioId}] listo.`);
             this.consecutiveErrors = 0; // Resetear errores
@@ -779,13 +791,17 @@ const QueueManager = new VideoQueueManager();
 app.post('/api/media/queue-video', uploadLimiter, verificarToken, esCreadorOAdmin, upload.single('video'), async (req, res) => {
     if (!req.file) return res.status(400).json({ error: "Archivo de video no recibido por el servidor." });
     
-    const { serieId, numeroEpisodio, tituloEpisodio, precio } = req.body;
+// Quitamos 'precio' del req.body porque ya no lo manda el frontend
+    const { serieId, numeroEpisodio, tituloEpisodio } = req.body;
     if (!serieId || !numeroEpisodio) {
-        fs.unlinkSync(req.file.path); // Limpiar si mandan mal los datos
+        fs.unlinkSync(req.file.path); 
         return res.status(400).json({ error: "Faltan datos obligatorios de la serie o el episodio." });
     }
 
     try {
+        // LÓGICA DE NEGOCIO: Los primeros 3 episodios son gratis (0), del 4 en adelante cuestan 20.
+        const precioAutomatico = Number(numeroEpisodio) <= 3 ? 0 : 20;
+
         // 1. Crear documento preliminar en Firebase (Estado: en_cola)
         const epiRef = db.collection('novelas').doc(serieId).collection('episodios').doc();
         await epiRef.set({
@@ -793,7 +809,7 @@ app.post('/api/media/queue-video', uploadLimiter, verificarToken, esCreadorOAdmi
             tituloEpisodio: tituloEpisodio || `Episodio ${numeroEpisodio}`,
             descripcion: "Procesando contenido...",
             videoUrl: '', 
-            precio: Number(precio) || 0,
+            precio: precioAutomatico, // PRECIO AUTO-ASIGNADO POR EL SERVIDOR
             vistas: 0,
             estadoProceso: 'en_cola',
             fechaCarga: admin.firestore.FieldValue.serverTimestamp()

@@ -15,9 +15,16 @@
         ::-webkit-scrollbar-track { background: #0f1219; }
         ::-webkit-scrollbar-thumb { background: #FF4D4D; border-radius: 10px; }
         .glass-panel { background: rgba(31, 41, 55, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.05); }
-        .progress-bar-bg { background-color: #374151; border-radius: 9999px; overflow: hidden; height: 8px; width: 100%; margin-top: 8px; display: none; }
-        .progress-bar-fill { background-color: #10b981; height: 100%; width: 0%; transition: width 0.2s ease; }
-        .status-badge { font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .progress-bar-bg { background-color: #374151; border-radius: 9999px; overflow: hidden; height: 6px; width: 100%; margin-top: 10px; display: none; }
+        .progress-bar-fill { background-color: #10b981; height: 100%; width: 0%; transition: width 0.3s ease; }
+        
+        /* Ocultar input file por defecto para darle un estilo moderno */
+        input[type="file"]::file-selector-button {
+            border: 1px solid #4b5563; padding: 0.5rem 1rem; border-radius: 0.5rem;
+            background-color: #1f2937; color: white; cursor: pointer; transition: 0.3s;
+            font-weight: bold; font-size: 0.75rem; text-transform: uppercase;
+        }
+        input[type="file"]::file-selector-button:hover { background-color: #374151; }
     </style>
 </head>
 <body class="bg-[#0f1219] text-white h-screen flex overflow-hidden font-sans selection:bg-fruti selection:text-white">
@@ -61,60 +68,63 @@
         <header class="lg:hidden flex items-center justify-between p-4 bg-gray-900 border-b border-gray-800 z-20">
             <div class="flex items-center space-x-2">
                 <i class="fa-solid fa-crown text-fruti"></i>
-                <span class="font-bold tracking-widest">FRUTINOVELAS</span>
+                <span class="font-bold tracking-widest text-sm">FRUTINOVELAS</span>
             </div>
             <button onclick="toggleSidebar()" class="text-white text-2xl focus:outline-none"><i class="fa-solid fa-bars"></i></button>
         </header>
 
-        <div class="flex-1 overflow-y-auto p-4 lg:p-8 relative z-10">
-            <div class="max-w-4xl mx-auto pb-10">
-                <h2 class="text-2xl lg:text-3xl font-black tracking-tight mb-6 flex items-center">
+        <div class="flex-1 overflow-y-auto p-4 lg:p-8 relative z-10 scroll-smooth">
+            <div class="max-w-4xl mx-auto pb-20">
+                <h2 class="text-2xl lg:text-3xl font-black tracking-tight mb-6 flex items-center flex-wrap gap-2">
                     Crear Nueva Serie 
-                    <span class="bg-blue-600 text-white text-[10px] uppercase font-bold px-2 py-1 rounded ml-3 shadow-lg"><i class="fa-solid fa-bolt mr-1"></i> Async Queue V14</span>
+                    <span class="bg-blue-600/20 border border-blue-500 text-blue-400 text-[10px] uppercase font-bold px-2 py-1 rounded shadow-lg flex items-center"><i class="fa-solid fa-robot mr-1"></i> Precios Automáticos</span>
                 </h2>
                 
-                <div class="glass-panel p-6 lg:p-8 rounded-2xl border border-gray-800 mb-8 shadow-2xl">
-                    <h3 class="text-lg font-bold mb-5 text-fruti border-b border-gray-700 pb-3 flex items-center"><i class="fa-solid fa-circle-info mr-2"></i> 1. Información General</h3>
+                <div class="glass-panel p-5 lg:p-8 rounded-3xl border border-gray-800 mb-8 shadow-2xl">
+                    <h3 class="text-lg font-bold mb-5 text-fruti flex items-center"><i class="fa-solid fa-clapperboard mr-2"></i> 1. Información de la Serie</h3>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="space-y-5">
                         <div>
                             <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Título de la Serie <span class="text-fruti">*</span></label>
-                            <input type="text" id="serie-titulo" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3.5 text-white focus:border-fruti focus:ring-1 focus:ring-fruti outline-none transition font-bold" placeholder="Ej: Amor en la oficina">
+                            <input type="text" id="serie-titulo" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-4 text-white focus:border-fruti focus:ring-1 focus:ring-fruti outline-none transition font-bold" placeholder="Ej: Amor de Medianoche">
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Descripción Corta</label>
-                            <textarea id="serie-desc" rows="3" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3.5 text-white focus:border-fruti focus:ring-1 focus:ring-fruti outline-none transition resize-none text-sm" placeholder="¿De qué trata?"></textarea>
+                            <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Sinopsis / Descripción</label>
+                            <textarea id="serie-desc" rows="3" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-4 text-white focus:border-fruti focus:ring-1 focus:ring-fruti outline-none transition resize-none text-sm" placeholder="Cuenta de qué trata tu historia..."></textarea>
                         </div>
-                    </div>
 
-                    <div class="bg-gray-900/50 p-4 rounded-xl border border-gray-800">
-                        <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Portada Oficial (Opcional - Se extrae del Episodio 1 si está vacía)</label>
-                        <div class="flex flex-col md:flex-row md:items-center gap-3">
-                            <input type="file" id="serie-portada" accept="image/*" class="text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-gray-800 file:text-white hover:file:bg-gray-700 w-full md:w-auto transition cursor-pointer">
-                            <button onclick="subirPortadaUnica()" id="btn-portada" class="bg-blue-600/20 text-blue-400 border border-blue-600/50 hover:bg-blue-600 hover:text-white px-5 py-2 rounded-lg text-sm font-bold transition shadow-lg w-full md:w-auto whitespace-nowrap"><i class="fa-solid fa-upload mr-2"></i>Subir Portada</button>
+                        <div class="bg-gray-800/50 p-5 rounded-2xl border border-dashed border-gray-600 relative">
+                            <label class="block text-[11px] font-bold text-gray-300 uppercase tracking-widest mb-2"><i class="fa-solid fa-image mr-1"></i> Portada Oficial (Opcional)</label>
+                            <p class="text-xs text-gray-500 mb-4">Si dejas esto en blanco, <b>el servidor generará una portada automáticamente</b> usando el primer segundo del Episodio 1.</p>
+                            
+                            <div class="flex flex-col md:flex-row md:items-center gap-4">
+                                <input type="file" id="serie-portada" accept="image/*" class="w-full md:w-auto text-sm text-gray-400">
+                                <button onclick="subirPortadaUnica()" id="btn-portada" class="w-full md:w-auto bg-gray-700 hover:bg-gray-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition shadow-lg"><i class="fa-solid fa-cloud-arrow-up mr-2"></i>Subir Portada Manual</button>
+                            </div>
+                            
+                            <div class="progress-bar-bg" id="progreso-portada-bg"><div class="progress-bar-fill" id="progreso-portada-fill"></div></div>
+                            <input type="hidden" id="url-portada-final">
+                            <p id="txt-portada-ok" class="text-green-400 text-xs mt-3 hidden font-bold"><i class="fa-solid fa-circle-check mr-1"></i> Portada manual subida correctamente.</p>
                         </div>
-                        <div class="progress-bar-bg" id="progreso-portada-bg"><div class="progress-bar-fill" id="progreso-portada-fill"></div></div>
-                        <input type="hidden" id="url-portada-final">
-                        <p id="txt-portada-ok" class="text-green-400 text-xs mt-3 hidden font-bold tracking-wider"><i class="fa-solid fa-check-circle mr-1"></i> Portada asegurada en el servidor</p>
                     </div>
                 </div>
 
-                <div class="glass-panel p-6 lg:p-8 rounded-2xl border border-gray-800 shadow-2xl mb-8">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-gray-700 pb-3 gap-4">
+                <div class="glass-panel p-5 lg:p-8 rounded-3xl border border-gray-800 shadow-2xl mb-8">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-gray-700 pb-4 gap-4">
                         <div>
-                            <h3 class="text-lg font-bold text-fruti flex items-center"><i class="fa-solid fa-list-ol mr-2"></i> 2. Gestor de Episodios</h3>
-                            <p class="text-xs text-gray-400 mt-1">Selecciona los videos. El servidor los procesará en segundo plano.</p>
+                            <h3 class="text-lg font-bold text-fruti flex items-center"><i class="fa-solid fa-list-ol mr-2"></i> 2. Videos de la Serie</h3>
+                            <p class="text-xs text-gray-400 mt-1">Los precios (Gratis/VIP) se asignan automáticamente por el sistema.</p>
                         </div>
-                        <button onclick="agregarFilaEpisodio()" class="bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-lg w-full md:w-auto"><i class="fa-solid fa-plus mr-2"></i>Añadir Episodio</button>
+                        <button onclick="agregarFilaEpisodio()" class="w-full sm:w-auto bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 px-6 py-3 rounded-xl text-sm font-bold transition shadow-lg"><i class="fa-solid fa-plus mr-2"></i>Añadir Episodio</button>
                     </div>
 
                     <div id="lista-episodios" class="space-y-4">
                         </div>
                 </div>
 
-                <div class="flex justify-end">
-                    <button id="btn-publicar-todo" onclick="publicarSerieAsincrona()" class="w-full md:w-auto bg-fruti hover:bg-red-600 text-white px-10 py-4 rounded-xl font-black text-lg shadow-[0_0_20px_rgba(255,77,77,0.4)] transition transform hover:-translate-y-1 uppercase tracking-widest flex items-center justify-center group">
-                        <i class="fa-solid fa-cloud-arrow-up mr-2 group-hover:animate-bounce"></i> PUBLICAR Y ENCOLAR
+                <div class="sticky bottom-4 z-30">
+                    <button id="btn-publicar-todo" onclick="publicarSerieAsincrona()" class="w-full bg-gradient-to-r from-fruti to-red-600 hover:from-red-600 hover:to-red-700 text-white px-8 py-5 rounded-2xl font-black text-lg shadow-[0_10px_25px_rgba(255,77,77,0.5)] transition-all transform hover:scale-[1.02] uppercase tracking-widest flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-rocket"></i> PUBLICAR SERIE Y ENCOLAR VIDEOS
                     </button>
                 </div>
             </div>
@@ -122,12 +132,11 @@
     </main>
 
     <script>
-        const API_URL = '/api'; // Cambia esto por tu dominio en producción
+        const API_URL = '/api'; // RUTAS RELATIVAS PARA RENDER
         const token = localStorage.getItem('token');
-        const nombreCreador = localStorage.getItem('nombre') || 'Creador';
         if (!token) window.location.href = '/login';
         
-        document.getElementById('creador-nombre').innerText = nombreCreador;
+        document.getElementById('creador-nombre').innerText = localStorage.getItem('nombre') || 'Creador';
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('-translate-x-full');
@@ -142,26 +151,29 @@
             const id = contadorEpisodios;
             episodiosData.push({ id: id, titulo: `Episodio ${id}` });
 
-            // Ya no hay botón de subir individual. Se selecciona el archivo y listo.
+            // UI de Tarjeta (Card) super responsive
             const html = `
-                <div class="bg-gray-900/80 border border-gray-700 p-5 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-inner relative overflow-hidden" id="epi-row-${id}">
-                    <div class="flex-1 w-full relative z-10">
-                        <div class="flex items-center space-x-3 mb-3">
-                            <span class="bg-gray-800 text-gray-400 border border-gray-700 px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest">EPI ${id}</span>
-                            <input type="text" id="titulo-epi-${id}" value="Episodio ${id}" class="bg-transparent border-b border-gray-600 text-white focus:border-fruti focus:outline-none w-full text-sm py-1 font-bold transition" onchange="actualizarTituloEpi(${id}, this.value)">
+                <div class="bg-gray-800/40 rounded-2xl p-4 md:p-5 border border-gray-700/50 hover:border-gray-500 transition duration-300 relative group" id="epi-row-${id}">
+                    <div class="flex flex-col md:flex-row gap-4 items-start md:items-center">
+                        
+                        <div class="bg-gray-900 rounded-xl w-full md:w-16 h-12 md:h-16 flex items-center justify-center border border-gray-700 shrink-0">
+                            <span class="text-gray-400 font-black text-xl">#${id}</span>
                         </div>
-                        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-                            <input type="file" id="file-epi-${id}" accept="video/mp4,video/mov" class="text-xs text-gray-500 file:mr-4 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:font-bold file:bg-gray-800 file:text-white w-full cursor-pointer hover:file:bg-gray-700 transition">
-                            <div class="flex items-center space-x-2">
-                                <label class="text-[10px] font-bold text-gray-400 uppercase">Precio:</label>
-                                <input type="number" id="precio-epi-${id}" value="${id > 3 ? 20 : 0}" class="bg-gray-800 text-white text-xs w-16 p-1 rounded text-center border border-gray-600 focus:outline-none">
+
+                        <div class="flex-1 w-full space-y-3">
+                            <input type="text" id="titulo-epi-${id}" value="Episodio ${id}" class="bg-transparent border-b border-gray-600 text-white focus:border-fruti focus:outline-none w-full text-base py-1 font-bold transition" onchange="actualizarTituloEpi(${id}, this.value)" placeholder="Título del Episodio">
+                            
+                            <div class="flex items-center w-full">
+                                <input type="file" id="file-epi-${id}" accept="video/mp4,video/mov" class="w-full text-gray-400 text-sm cursor-pointer">
                             </div>
+
+                            <div class="progress-bar-bg" id="progreso-bg-${id}"><div class="progress-bar-fill" id="progreso-fill-${id}"></div></div>
+                            <p id="txt-status-${id}" class="text-gray-400 text-[10px] hidden font-black tracking-widest uppercase"></p>
                         </div>
-                        <div class="progress-bar-bg mt-3" id="progreso-bg-${id}"><div class="progress-bar-fill" id="progreso-fill-${id}"></div></div>
-                        <p id="txt-status-${id}" class="text-gray-400 text-[10px] mt-2 hidden font-black tracking-widest uppercase"></p>
-                    </div>
-                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 w-full md:w-auto relative z-10">
-                        <button onclick="eliminarEpisodio(${id})" class="w-full sm:w-auto text-red-500 hover:text-red-400 bg-red-900/20 sm:bg-transparent border border-red-900/50 sm:border-transparent px-4 py-2.5 sm:p-0 rounded-lg text-xs font-bold transition"><i class="fa-solid fa-trash mr-1"></i> Quitar</button>
+
+                        <button onclick="eliminarEpisodio(${id})" class="w-full md:w-auto bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 px-4 py-3 rounded-xl transition-all flex items-center justify-center shrink-0" title="Eliminar Episodio">
+                            <i class="fa-solid fa-trash-can md:mr-0 mr-2"></i> <span class="md:hidden font-bold">Eliminar Episodio</span>
+                        </button>
                     </div>
                 </div>
             `;
@@ -212,33 +224,28 @@
             xhr.send(formData);
         }
 
-        // =========================================================================
-        // NUEVO FLUJO: CREAR ESTRUCTURA -> ENVIAR A COLA ASÍNCRONA
-        // =========================================================================
         async function publicarSerieAsincrona() {
             const titulo = document.getElementById('serie-titulo').value.trim();
             const desc = document.getElementById('serie-desc').value.trim();
-            const portada = document.getElementById('url-portada-final').value;
+            const portada = document.getElementById('url-portada-final').value; // Puede ir vacía, el servidor lo arregla
             const btnMain = document.getElementById('btn-publicar-todo');
 
-            if(!titulo) return Swal.fire({icon:'warning', title:'Aviso', text:'Dale un nombre a tu serie.', background:'#1f2937', color:'#fff'});
-            if(episodiosData.length === 0) return Swal.fire({icon:'warning', title:'Aviso', text:'Añade episodios.', background:'#1f2937', color:'#fff'});
+            if(!titulo) return Swal.fire({icon:'warning', title:'Falta Título', text:'Debes darle un nombre a tu serie.', background:'#1f2937', color:'#fff'});
+            if(episodiosData.length === 0) return Swal.fire({icon:'warning', title:'Sin Videos', text:'Agrega al menos un episodio.', background:'#1f2937', color:'#fff'});
 
-            // Validar que todos los episodios tengan archivo seleccionado
             for (let i = 0; i < episodiosData.length; i++) {
                 const epi = episodiosData[i];
                 const fileInput = document.getElementById(`file-epi-${epi.id}`);
                 if (!fileInput.files[0]) {
-                    return Swal.fire({icon:'error', title:'Videos Pendientes', text:`Falta seleccionar el video para: ${epi.titulo}`, background:'#1f2937', color:'#fff'});
+                    return Swal.fire({icon:'error', title:'Video Faltante', text:`No has adjuntado el video para el: ${epi.titulo}`, background:'#1f2937', color:'#fff'});
                 }
             }
 
             btnMain.disabled = true;
-            btnMain.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> INICIANDO PROCESO...';
+            btnMain.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> TRANSFERIENDO AL SERVIDOR...';
 
             try {
-                // PASO 1: Crear la estructura en Firebase (Estado Pendiente)
-                Swal.fire({ title: 'Creando Estructura...', text: 'Registrando serie en la base de datos.', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#1f2937', color: '#fff' });
+                Swal.fire({ title: 'Preparando Servidor', text: 'Registrando la estructura...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#1f2937', color: '#fff' });
 
                 const resEstructura = await fetch(`${API_URL}/creador/novelas-estructura`, {
                     method: 'POST', 
@@ -249,36 +256,32 @@
                 const dataEstructura = await resEstructura.json();
                 if(!resEstructura.ok) throw new Error(dataEstructura.error || 'Error creando estructura');
                 
-                const serieId = dataEstructura.id; // ID maestro para encolar los videos
+                const serieId = dataEstructura.id; 
 
-                // PASO 2: Iterar y Enviar videos a la Cola (Se hace 1 por 1 para no matar el navegador del usuario)
-                Swal.fire({ title: 'Subiendo Originales', text: 'Transfiriendo archivos al servidor de cola...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#1f2937', color: '#fff' });
+                Swal.fire({ title: 'Subiendo Originales', text: 'Por favor, no cierres esta ventana hasta que termine.', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#1f2937', color: '#fff' });
 
                 for (let i = 0; i < episodiosData.length; i++) {
                     const epi = episodiosData[i];
                     await subirVideoACola(epi, serieId, i + 1);
                 }
 
-                // FIN DEL PROCESO
                 Swal.fire({ 
                     icon: 'success', 
-                    title: '¡Misión Cumplida!', 
-                    html: 'Tus videos fueron enviados al servidor.<br><br><span class="text-xs text-gray-400">El servidor los procesará 1 a 1 en segundo plano. Ya puedes cerrar esta ventana.</span>', 
+                    title: '¡Videos Encolados!', 
+                    html: '<div class="text-left text-sm text-gray-300 mt-2"><p>Tus archivos están en nuestro servidor seguro.</p><ul class="list-disc pl-5 mt-2 space-y-1"><li>El sistema renderizará 1 por 1 en segundo plano.</li><li>Los precios se ajustarán automáticamente.</li><li>Tu serie aparecerá en la App al estar lista.</li></ul><p class="mt-3 font-bold text-green-400">Ya puedes cerrar esta ventana con seguridad.</p></div>', 
                     background: '#1f2937', color: '#fff' 
                 }).then(() => window.location.href = 'mis-series.html');
 
             } catch (error) { 
                 Swal.fire({icon:'error', title:'Error Crítico', text:error.message, background:'#1f2937', color:'#fff'}); 
                 btnMain.disabled = false;
-                btnMain.innerHTML = '<i class="fa-solid fa-cloud-arrow-up mr-2"></i> REINTENTAR';
+                btnMain.innerHTML = '<i class="fa-solid fa-rocket mr-2"></i> REINTENTAR PUBLICACIÓN';
             }
         }
 
-        // Función que envía el archivo crudo a `/api/media/queue-video`
         function subirVideoACola(epi, serieId, numeroReal) {
             return new Promise((resolve, reject) => {
                 const fileInput = document.getElementById(`file-epi-${epi.id}`);
-                const precioInput = document.getElementById(`precio-epi-${epi.id}`);
                 const file = fileInput.files[0];
                 
                 const barBg = document.getElementById(`progreso-bg-${epi.id}`);
@@ -287,7 +290,7 @@
 
                 barBg.style.display = 'block';
                 txtStatus.style.display = 'block';
-                txtStatus.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Subiendo al servidor...';
+                txtStatus.innerHTML = '<i class="fa-solid fa-cloud-arrow-up fa-bounce mr-1"></i> Transfiriendo...';
                 txtStatus.className = "text-blue-400 text-[10px] mt-2 font-black tracking-widest uppercase";
 
                 const formData = new FormData();
@@ -295,7 +298,7 @@
                 formData.append('serieId', serieId);
                 formData.append('numeroEpisodio', numeroReal);
                 formData.append('tituloEpisodio', epi.titulo);
-                formData.append('precio', precioInput.value || 0);
+                // El campo "precio" ya no se envía. El backend lo decidirá.
 
                 const xhr = new XMLHttpRequest();
                 xhr.open('POST', `${API_URL}/media/queue-video`, true);
@@ -310,20 +313,19 @@
 
                 xhr.onload = function() {
                     if (xhr.status === 200) {
-                        barFill.style.backgroundColor = '#8b5cf6'; // Morado (En Cola)
-                        txtStatus.innerHTML = '<i class="fa-solid fa-clock mr-1"></i> EN COLA DE PROCESAMIENTO';
+                        barFill.style.backgroundColor = '#8b5cf6'; // Morado
+                        txtStatus.innerHTML = '<i class="fa-solid fa-check-double mr-1"></i> EN COLA DEL SERVIDOR';
                         txtStatus.className = "text-purple-400 text-[10px] mt-2 font-black tracking-widest uppercase";
-                        fileInput.style.display = 'none'; // Ocultar input para que quede limpio
+                        fileInput.style.display = 'none'; 
                         resolve();
                     } else {
-                        barFill.style.backgroundColor = '#ef4444'; 
-                        txtStatus.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> ERROR DE SUBIDA';
+                        barFill.style.backgroundColor = '#ef4444'; // Rojo
+                        txtStatus.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> FALLO DE RED';
                         txtStatus.className = "text-red-400 text-[10px] mt-2 font-black tracking-widest uppercase";
                         reject(new Error(`Fallo al subir ${epi.titulo}`));
                     }
                 };
-
-                xhr.onerror = () => reject(new Error("Fallo de red al subir archivo."));
+                xhr.onerror = () => reject(new Error("Pérdida de conexión con el servidor."));
                 xhr.send(formData);
             });
         }
