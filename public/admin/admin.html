@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | Moderación</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* Estilos específicos para la vista de admin integrados al Dark Mode */
+        .tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid #333; }
+        .tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; color: var(--grey); font-weight: bold; transition: 0.3s; }
+        .tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+        
+        .serie-card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #333; display: flex; flex-direction: column; gap: 10px; }
+        .serie-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; }
+        .serie-header { display: flex; justify-content: space-between; align-items: center; }
+        .serie-header h3 { margin: 0; font-size: 18px; color: var(--text); }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white; }
+        .badge.pendiente { background: #f59e0b; }
+        .badge.publicado { background: #10b981; }
+        .badge.rechazado { background: #ef4444; }
+        
+        .creador-info { font-size: 13px; color: var(--grey); margin: 5px 0; }
+        .action-buttons { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-action { flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; color: white; }
+        .btn-approve { background: #10b981; }
+        .btn-reject { background: #ef4444; }
+        .btn-action:hover { opacity: 0.8; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <h2 style="margin-top: 0;">🎬 Moderación de Series</h2>
+    <p style="color: var(--grey); font-size: 14px;">Revisa y aprueba el contenido subido por tu equipo.</p>
+
+    <div class="tabs">
+        <div class="tab active" onclick="cambiarTab('pendiente')" id="tab-pendiente">⏳ Pendientes</div>
+        <div class="tab" onclick="cambiarTab('publicado')" id="tab-publicado">✅ Publicadas</div>
+    </div>
+
+    <div id="lista-series">
+        <p style="text-align: center; color: var(--grey);">Cargando series...</p>
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <a href="/admin" class="nav-item active">
+        <i>🎬</i><span>Series</span>
+    </a>
+    <a href="/admin/usuarios" class="nav-item">
+        <i>👥</i><span>Equipo</span>
+    </a>
+    <a href="/admin/finanzas" class="nav-item">
+        <i>💰</i><span>Finanzas</span>
+    </a>
+    <a href="#" onclick="cerrarSesion()" class="nav-item" style="color: #ef4444;">
+        <i>🚪</i><span>Salir</span>
+    </a>
+</nav>
+
+<script>
+    const token = localStorage.getItem('fruti_token');
+    let filtroActual = 'pendiente';
+
+    window.onload = () => {
+        if (!token || localStorage.getItem('fruti_role') !== 'admin') {
+            window.location.href = '/login';
+        } else {
+            cargarSeries();
+        }
+    };
+
+    function cerrarSesion() {
+        localStorage.clear();
+        window.location.href = '/login';
+    }
+
+    function cambiarTab(estado) {
+        filtroActual = estado;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(`tab-${estado}`).classList.add('active');
+        cargarSeries();
+    }
+
+    async function cargarSeries() {
+        const contenedor = document.getElementById('lista-series');
+        contenedor.innerHTML = '<p style="text-align: center; color: var(--grey);">Cargando...</p>';
+
+        try {
+            const res = await fetch('/api/admin/novelas', {
+                headers: { 'Authorization': token }
+            });
+            const data = await res.json();
+
+            const filtradas = data.filter(s => s.estado === filtroActual);
+
+            if (filtradas.length === 0) {
+                contenedor.innerHTML = `<p style="text-align: center; color: var(--grey); padding: 20px;">No hay series en estado ${filtroActual}.</p>`;
+                return;
+            }
+
+            contenedor.innerHTML = filtradas.map(serie => `
+                <div class="serie-card">
+                    <img src="${serie.portadaUrl}" alt="Portada">
+                    <div class="serie-header">
+                        <h3>${serie.titulo}</h3>
+                        <span class="badge ${serie.estado}">${serie.estado.toUpperCase()}</span>
+                    </div>
+                    <div class="creador-info">👤 Subido por: <b>${serie.nombreCreador}</b></div>
+                    <p style="font-size: 13px; color: #ccc; margin: 0;">${serie.descripcion.substring(0, 80)}...</p>
+                    
+                    ${filtroActual === 'pendiente' ? `
+                        <div class="action-buttons">
+                            <button class="btn-action btn-approve" onclick="cambiarEstado('${serie.id}', 'publicado')">✅ Aprobar y Publicar</button>
+                            <button class="btn-action btn-reject" onclick="cambiarEstado('${serie.id}', 'rechazado')">❌ Rechazar</button>
+                        </div>
+                    ` : `
+                        <div class="action-buttons">
+                            <button class="btn-action" style="background: #333;" onclick="cambiarEstado('${serie.id}', 'pendiente')">⬇️ Regresar a Pendientes</button>
+                        </div>
+                    `}
+                </div>
+            `).join('');
+
+        } catch (e) {
+            contenedor.innerHTML = '<p style="text-align: center; color: #ef4444;">Error al cargar las series.</p>';
+        }
+    }
+
+    async function cambiarEstado(id, nuevoEstado) {
+        if (!confirm(`¿Seguro que deseas marcar esta serie como ${nuevoEstado.toUpperCase()}?`)) return;
+
+        try {
+            const res = await fetch(`/api/admin/novelas/${id}/estado`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': token },
+                body: JSON.stringify({ estado: nuevoEstado })
+            });
+
+            if (res.ok) {
+                cargarSeries(); // Recarga la lista para que desaparezca
+            } else {
+                alert("Error al actualizar el estado.");
+            }
+        } catch (e) {
+            alert("Error de conexión con el servidor.");
+        }
+    }
+</script>
+</body>
+</html>

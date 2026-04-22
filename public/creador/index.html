@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator Studio | Dashboard</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class', theme: { extend: { colors: { fruti: '#FF4D4D', panel: '#1f2937' } } } }</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f1219; }
+        ::-webkit-scrollbar-thumb { background: #FF4D4D; border-radius: 10px; }
+        .glass-panel { background: rgba(31, 41, 55, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.05); }
+    </style>
+</head>
+<body class="bg-[#0f1219] text-white h-screen flex overflow-hidden font-sans selection:bg-fruti selection:text-white">
+
+    <div id="mobile-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden lg:hidden transition-opacity"></div>
+
+    <aside id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full lg:relative lg:translate-x-0 w-72 bg-gray-900 border-r border-gray-800 flex flex-col justify-between shadow-2xl z-50 transition-transform duration-300 ease-in-out">
+        <div class="overflow-y-auto h-full">
+            <div class="p-6 flex items-center justify-between border-b border-gray-800 sticky top-0 bg-gray-900 z-10">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-gradient-to-br from-fruti to-orange-500 p-2.5 rounded-xl shadow-[0_0_20px_rgba(255,77,77,0.4)]">
+                        <i class="fa-solid fa-clapperboard text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-black tracking-widest text-white leading-tight">STUDIO</h1>
+                        <p class="text-[10px] text-green-400 font-bold uppercase tracking-widest" id="creador-nombre">Cargando...</p>
+                    </div>
+                </div>
+                <button onclick="toggleSidebar()" class="lg:hidden text-gray-400 hover:text-white text-2xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <nav class="p-4 space-y-1.5 mt-2">
+                <p class="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-3 px-4">Panel de Control</p>
+                <a href="index.html" class="w-full flex items-center space-x-3 px-4 py-3.5 bg-fruti/10 text-fruti border-r-4 border-fruti rounded-l-xl transition-all font-bold">
+                    <i class="fa-solid fa-chart-pie w-5 text-lg"></i> <span>Mi Rendimiento</span>
+                </a>
+                <a href="mis-series.html" class="w-full flex items-center space-x-3 px-4 py-3.5 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl transition-all font-medium">
+                    <i class="fa-solid fa-list w-5 text-lg"></i> <span>Mis Series</span>
+                </a>
+                <a href="nueva-serie.html" class="w-full flex items-center space-x-3 px-4 py-3.5 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl transition-all font-medium">
+                    <i class="fa-solid fa-cloud-arrow-up w-5 text-lg"></i> <span>Subir Nueva Serie</span>
+                </a>
+                <a href="finanzas.html" class="w-full flex items-center space-x-3 px-4 py-3.5 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl transition-all font-medium">
+                    <i class="fa-solid fa-wallet w-5 text-lg"></i> <span>Mis Ganancias</span>
+                </a>
+            </nav>
+        </div>
+        <div class="p-5 border-t border-gray-800 bg-gray-900/80 backdrop-blur">
+            <button onclick="cerrarSesion()" class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gray-800 hover:bg-red-500 text-gray-300 hover:text-white border border-gray-700 hover:border-red-500 rounded-xl transition-all text-sm font-bold group">
+                <i class="fa-solid fa-power-off group-hover:rotate-180 transition-transform duration-300"></i> <span>Cerrar Sesión</span>
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <header class="lg:hidden flex items-center justify-between p-4 bg-gray-900 border-b border-gray-800 z-20">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-crown text-fruti"></i>
+                <span class="font-bold tracking-widest">FRUTINOVELAS</span>
+            </div>
+            <button onclick="toggleSidebar()" class="text-white text-2xl focus:outline-none"><i class="fa-solid fa-bars"></i></button>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 lg:p-8 relative z-10">
+            
+            <div class="flex flex-col lg:flex-row lg:justify-between lg:items-end mb-8 gap-4">
+                <div>
+                    <h2 class="text-2xl lg:text-3xl font-black tracking-tight">Bienvenido a tu Estudio</h2>
+                    <p class="text-gray-400 mt-1 text-xs lg:text-sm">Métricas y resumen de tu impacto en la plataforma.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                <div class="glass-panel p-6 rounded-2xl border-t-4 border-fruti relative overflow-hidden group shadow-lg hover:border-red-400 transition-colors">
+                    <i class="fa-solid fa-eye absolute -right-4 -bottom-4 text-7xl text-gray-800 opacity-50 group-hover:scale-110 transition-transform"></i>
+                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">Vistas Totales</p>
+                    <h3 class="text-4xl font-black text-white mt-2" id="kpi-vistas">--</h3>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl border-t-4 border-green-500 relative overflow-hidden group shadow-lg hover:border-green-400 transition-colors">
+                    <i class="fa-solid fa-sack-dollar absolute -right-4 -bottom-4 text-7xl text-gray-800 opacity-50 group-hover:scale-110 transition-transform"></i>
+                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">Ganancias Generadas</p>
+                    <h3 class="text-4xl font-black text-green-400 mt-2" id="kpi-ingresos">$--</h3>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl border-t-4 border-purple-500 relative overflow-hidden group shadow-lg hover:border-purple-400 transition-colors">
+                    <i class="fa-solid fa-film absolute -right-4 -bottom-4 text-7xl text-gray-800 opacity-50 group-hover:scale-110 transition-transform"></i>
+                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">Series Publicadas</p>
+                    <h3 class="text-4xl font-black text-white mt-2" id="kpi-series">--</h3>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl border border-gray-800 overflow-hidden shadow-2xl">
+                <div class="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-900/50">
+                    <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-clock-rotate-left mr-2 text-fruti"></i> Actividad Reciente</h3>
+                    <a href="mis-series.html" class="text-xs font-bold text-fruti hover:text-red-400 uppercase tracking-widest">Ver catálogo</a>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="recent-series-grid">
+                        <div class="col-span-full text-center py-6 text-gray-500">
+                            <i class="fa-solid fa-circle-notch fa-spin fa-2x mb-2 text-fruti"></i>
+                            <p class="text-xs font-bold uppercase tracking-widest">Cargando...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api/creador';
+        const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
+        const nombreCreador = localStorage.getItem('nombre') || 'Creador';
+
+        if (!token || (role !== 'creador' && role !== 'admin')) window.location.href = '/login';
+        
+        document.getElementById('creador-nombre').innerText = nombreCreador;
+        const headers = { 'Authorization': `Bearer ${token}` };
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            document.getElementById('mobile-overlay').classList.toggle('hidden');
+        }
+
+        async function cargarDatos() {
+            try {
+                const res = await fetch(`${API_URL}/mis-novelas`, { headers });
+                if(!res.ok) throw new Error("Fallo API");
+                const series = await res.json();
+                
+                let totalVistas = 0;
+                let totalIngresos = 0;
+                series.forEach(s => {
+                    totalVistas += (s.vistasTotales || 0);
+                    totalIngresos += (s.ingresosGenerados || 0);
+                });
+
+                animarValor('kpi-series', 0, series.length, 1000);
+                animarValor('kpi-vistas', 0, totalVistas, 1000);
+                animarValorMoneda('kpi-ingresos', 0, totalIngresos, 1000);
+
+                const grid = document.getElementById('recent-series-grid');
+                if(series.length === 0) {
+                    grid.innerHTML = `<p class="text-gray-500 text-sm font-bold col-span-full text-center py-6">Aún no has subido ninguna serie. ¡Empieza hoy!</p>`;
+                    return;
+                }
+
+                grid.innerHTML = series.slice(0, 4).map(s => {
+                    let estadoColor = s.estado === 'aprobado' ? 'text-green-400' : (s.estado === 'rechazado' ? 'text-red-400' : 'text-yellow-400');
+                    return `
+                    <div class="bg-gray-800/80 rounded-xl p-3 border border-gray-700 flex items-center space-x-4 hover:border-gray-500 transition shadow-md">
+                        <img src="${s.portadaUrl || 'https://via.placeholder.com/150'}" class="w-14 h-20 object-cover rounded-lg border border-gray-700">
+                        <div class="overflow-hidden">
+                            <p class="font-black text-sm text-white truncate shadow-black drop-shadow-md">${s.title || s.titulo}</p>
+                            <p class="text-[10px] uppercase font-black tracking-widest mt-1 ${estadoColor}"><i class="fa-solid fa-circle text-[8px] mr-1"></i>${s.estado}</p>
+                        </div>
+                    </div>`;
+                }).join('');
+
+            } catch (e) { Swal.fire({icon:'error', title:'Error', text:'No se pudieron cargar tus datos.', background:'#1f2937', color:'#fff'}); }
+        }
+
+        function animarValor(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerText = Math.floor(progress * (end - start) + start).toLocaleString();
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function animarValorMoneda(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerText = '$' + (progress * (end - start) + start).toFixed(2);
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function cerrarSesion() { localStorage.clear(); window.location.href = '/login'; }
+        window.onload = cargarDatos;
+    </script>
+</body>
+</html>

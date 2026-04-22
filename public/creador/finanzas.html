@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator Studio | Mis Ganancias</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class', theme: { extend: { colors: { fruti: '#FF4D4D', panel: '#1f2937' } } } }</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f1219; }
+        ::-webkit-scrollbar-thumb { background: #FF4D4D; border-radius: 10px; }
+        .glass-panel { background: rgba(31, 41, 55, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.05); }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-[#0f1219] text-white h-screen flex overflow-hidden font-sans selection:bg-fruti selection:text-white">
+
+    <div id="mobile-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden lg:hidden transition-opacity"></div>
+
+    <aside id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full lg:relative lg:translate-x-0 w-72 bg-gray-900 border-r border-gray-800 flex flex-col justify-between shadow-2xl z-50 transition-transform duration-300 ease-in-out">
+        <div class="overflow-y-auto h-full">
+            <div class="p-6 flex items-center justify-between border-b border-gray-800 sticky top-0 bg-gray-900 z-10">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-gradient-to-br from-fruti to-orange-500 p-2.5 rounded-xl shadow-[0_0_20px_rgba(255,77,77,0.4)]">
+                        <i class="fa-solid fa-clapperboard text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-black tracking-widest text-white leading-tight">STUDIO</h1>
+                        <p class="text-[10px] text-green-400 font-bold uppercase tracking-widest" id="creador-nombre">Cargando...</p>
+                    </div>
+                </div>
+                <button onclick="toggleSidebar()" class="lg:hidden text-gray-400 hover:text-white text-2xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <nav class="p-4 space-y-1.5 mt-2">
+                <p class="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-3 px-4">Panel de Control</p>
+                <a href="index.html" class="w-full flex items-center space-x-3 px-4 py-3.5 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl transition-all font-medium">
+                    <i class="fa-solid fa-chart-pie w-5 text-lg"></i> <span>Mi Rendimiento</span>
+                </a>
+                <a href="mis-series.html" class="w-full flex items-center space-x-3 px-4 py-3.5 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl transition-all font-medium">
+                    <i class="fa-solid fa-list w-5 text-lg"></i> <span>Mis Series</span>
+                </a>
+                <a href="nueva-serie.html" class="w-full flex items-center space-x-3 px-4 py-3.5 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl transition-all font-medium">
+                    <i class="fa-solid fa-cloud-arrow-up w-5 text-lg"></i> <span>Subir Nueva Serie</span>
+                </a>
+                <a href="finanzas.html" class="w-full flex items-center space-x-3 px-4 py-3.5 bg-fruti/10 text-fruti border-r-4 border-fruti rounded-l-xl transition-all font-bold">
+                    <i class="fa-solid fa-wallet w-5 text-lg"></i> <span>Mis Ganancias</span>
+                </a>
+            </nav>
+        </div>
+        <div class="p-5 border-t border-gray-800 bg-gray-900/80 backdrop-blur">
+            <button onclick="cerrarSesion()" class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gray-800 hover:bg-red-500 text-gray-300 hover:text-white border border-gray-700 hover:border-red-500 rounded-xl transition-all text-sm font-bold group">
+                <i class="fa-solid fa-power-off group-hover:rotate-180 transition-transform duration-300"></i> <span>Cerrar Sesión</span>
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <header class="lg:hidden flex items-center justify-between p-4 bg-gray-900 border-b border-gray-800 z-20">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-crown text-fruti"></i>
+                <span class="font-bold tracking-widest">FRUTINOVELAS</span>
+            </div>
+            <button onclick="toggleSidebar()" class="text-white text-2xl focus:outline-none"><i class="fa-solid fa-bars"></i></button>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 lg:p-8 relative z-10">
+            
+            <div class="max-w-5xl mx-auto">
+                <div class="mb-8">
+                    <h2 class="text-2xl lg:text-3xl font-black tracking-tight">Centro de Ingresos</h2>
+                    <p class="text-gray-400 mt-1 text-xs lg:text-sm">Rendimiento financiero de tus series y saldo pendiente de pago.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                    
+                    <div class="glass-panel p-6 lg:p-8 rounded-3xl border border-yellow-900/50 relative overflow-hidden flex flex-col justify-between shadow-2xl bg-gradient-to-br from-gray-900 to-gray-800 group">
+                        <div class="absolute -right-6 -bottom-6 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none transform -rotate-12"><i class="fa-solid fa-clock-rotate-left text-[150px] text-yellow-500"></i></div>
+                        
+                        <div class="relative z-10">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-yellow-500 font-bold uppercase tracking-widest text-xs lg:text-sm">Saldo en Revisión</p>
+                                <span class="bg-yellow-500/20 text-yellow-500 text-[10px] px-2 py-1 rounded font-bold uppercase"><i class="fa-solid fa-hourglass-half mr-1"></i> 48hs</span>
+                            </div>
+                            <h3 class="text-4xl lg:text-6xl font-black text-white tracking-tight font-mono" id="saldo-estimado">$0.00</h3>
+                            <p class="text-[10px] lg:text-xs text-gray-400 mt-4 font-medium"><i class="fa-solid fa-circle-info mr-1"></i> Ingresos generados automáticamente por vistas. Pendientes de auditoría administrativa.</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 lg:p-8 rounded-3xl border border-green-900/50 relative overflow-hidden flex flex-col justify-between shadow-2xl bg-gradient-to-br from-gray-900 to-gray-800 group">
+                        <div class="absolute -right-6 -bottom-6 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none transform -rotate-12"><i class="fa-solid fa-vault text-[150px] text-green-500"></i></div>
+                        
+                        <div class="relative z-10">
+                            <p class="text-green-500 font-bold uppercase tracking-widest text-xs lg:text-sm mb-2">Saldo Aprobado (Retirable)</p>
+                            <h3 class="text-4xl lg:text-6xl font-black text-white tracking-tight font-mono" id="saldo-aprobado">$0.00</h3>
+                            <p class="text-[10px] lg:text-xs text-gray-400 mt-4 font-medium mb-4"><i class="fa-solid fa-shield-check mr-1"></i> Fondos verificados y garantizados por la plataforma.</p>
+                            
+                            <button id="btn-retiro" disabled class="w-full bg-gray-800 text-gray-500 px-4 py-3 rounded-xl text-xs font-bold border border-gray-700 flex justify-center items-center opacity-70 cursor-not-allowed transition-all">
+                                <i class="fa-solid fa-building-columns mr-2"></i> Retiro Automático
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <h3 class="text-lg lg:text-xl font-bold mb-5 text-white flex items-center"><i class="fa-solid fa-chart-bar text-fruti mr-2"></i> Desglose por Series</h3>
+                
+                <div class="glass-panel rounded-2xl border border-gray-800 overflow-hidden shadow-2xl">
+                    <div class="overflow-x-auto hide-scroll pb-2">
+                        <table class="w-full text-left text-sm whitespace-nowrap min-w-[700px]">
+                            <thead class="bg-gray-900 text-gray-400 uppercase tracking-widest text-[10px] lg:text-xs">
+                                <tr>
+                                    <th class="px-6 py-5 font-bold border-b border-gray-800">Serie Publicada</th>
+                                    <th class="px-6 py-5 font-bold border-b border-gray-800 text-center">Audiencia Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-desglose" class="divide-y divide-gray-800/50">
+                                <tr><td colspan="2" class="text-center py-12"><i class="fa-solid fa-circle-notch fa-spin fa-2x text-fruti"></i></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api/creador'; // Ajustar en prod
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '/login';
+        
+        document.getElementById('creador-nombre').innerText = localStorage.getItem('nombre') || 'Creador';
+        const headers = { 'Authorization': `Bearer ${token}` };
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            document.getElementById('mobile-overlay').classList.toggle('hidden');
+        }
+
+        async function cargarFinanzas() {
+            try {
+                // 1. Cargar saldos reales del perfil del creador
+                const resPerfil = await fetch(`${API_URL}/perfil`, { headers });
+                if(resPerfil.ok) {
+                    const perfil = await resPerfil.json();
+                    const estimado = perfil.saldoEstimado || 0;
+                    const aprobado = perfil.saldoPendiente || 0;
+                    
+                    animarValorMoneda("saldo-estimado", 0, estimado, 1500);
+                    animarValorMoneda("saldo-aprobado", 0, aprobado, 1500);
+
+                    // Si tiene dinero aprobado, habilitar botón visualmente (aunque la lógica de retiro sea futura)
+                    if(aprobado > 0) {
+                        const btn = document.getElementById('btn-retiro');
+                        btn.className = "w-full bg-green-600/20 text-green-400 hover:bg-green-600 hover:text-white px-4 py-3 rounded-xl text-xs font-bold border border-green-600/50 flex justify-center items-center transition-all shadow-lg";
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-money-bill-transfer mr-2"></i> Solicitar Liquidación';
+                        btn.onclick = () => Swal.fire({icon: 'info', title: 'Aviso', text: 'Contacta al administrador para que procese el pago a tu cuenta bancaria.', background: '#1f2937', color: '#fff'});
+                    }
+                }
+
+                // 2. Cargar desglose de series para las vistas
+                const resSeries = await fetch(`${API_URL}/mis-novelas`, { headers });
+                const series = await resSeries.json();
+                const tbody = document.getElementById('tabla-desglose');
+
+                if(series.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="2" class="text-center py-12 text-gray-500 font-bold">No has subido contenido aún.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = series.map(s => {
+                    const vistas = s.vistasTotales || 0;
+                    const estado = s.estado === 'aprobado' 
+                        ? '<span class="text-green-400"><i class="fa-solid fa-check mr-1"></i> Monetizando</span>'
+                        : '<span class="text-yellow-500"><i class="fa-solid fa-clock mr-1"></i> En Revisión</span>';
+
+                    return `
+                    <tr class="hover:bg-gray-800/40 transition duration-200">
+                        <td class="px-6 py-5">
+                            <div class="flex items-center space-x-4">
+                                <img src="${s.portadaUrl || 'https://via.placeholder.com/150'}" class="w-12 h-16 object-cover rounded-lg border border-gray-700 shadow-md">
+                                <div>
+                                    <p class="font-black text-white text-base leading-tight mb-1">${s.title || s.titulo}</p>
+                                    <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">${estado}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-5 text-center">
+                            <span class="bg-gray-900 border border-gray-700 px-4 py-2 rounded-lg text-gray-300 font-black tracking-wide">${vistas.toLocaleString()} <i class="fa-solid fa-eye ml-1 opacity-50"></i></span>
+                        </td>
+                    </tr>`;
+                }).join('');
+
+            } catch (e) { 
+                Swal.fire({icon: 'error', title: 'Error', text: 'No se pudo conectar al servidor financiero.', background: '#1f2937', color: '#fff'}); 
+            }
+        }
+
+        function animarValorMoneda(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerText = '$' + (progress * (end - start) + start).toFixed(2);
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function cerrarSesion() { localStorage.clear(); window.location.href = '/login'; }
+        window.onload = cargarFinanzas;
+    </script>
+</body>
+</html>

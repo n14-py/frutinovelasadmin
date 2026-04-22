@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso | Fruti Engine 10.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class', theme: { extend: { colors: { fruti: '#FF4D4D' } } } }</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gray-900 text-white h-screen flex items-center justify-center overflow-hidden">
+    <div class="absolute w-96 h-96 bg-fruti/20 rounded-full blur-[100px] -top-20 -left-20 pointer-events-none"></div>
+    <div class="absolute w-96 h-96 bg-purple-600/20 rounded-full blur-[100px] bottom-10 right-10 pointer-events-none"></div>
+
+    <div class="bg-gray-800/80 backdrop-blur-xl border border-gray-700 p-10 rounded-2xl shadow-2xl w-full max-w-md relative z-10">
+        <div class="text-center mb-8">
+            <div class="bg-fruti w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_15px_rgba(255,77,77,0.5)]">
+                <i class="fa-solid fa-crown text-2xl text-white"></i>
+            </div>
+            <h1 class="text-2xl font-black tracking-wider">FRUTI<span class="text-fruti">ENGINE</span></h1>
+            <p class="text-gray-400 text-sm mt-1">Super Admin & Creator Studio</p>
+        </div>
+
+        <form id="loginForm" onsubmit="iniciarSesion(event)" class="space-y-5">
+            <div>
+                <label class="block text-sm font-bold text-gray-300 mb-2">Correo Electrónico / Usuario</label>
+                <div class="relative">
+                    <i class="fa-solid fa-envelope absolute left-4 top-3.5 text-gray-500"></i>
+                    <input type="text" id="email" class="w-full bg-gray-900 border border-gray-700 rounded-lg pl-10 pr-4 py-3 text-white focus:border-fruti focus:outline-none transition" placeholder="admin / correo@creador.com" required>
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-gray-300 mb-2">Contraseña</label>
+                <div class="relative">
+                    <i class="fa-solid fa-lock absolute left-4 top-3.5 text-gray-500"></i>
+                    <input type="password" id="password" class="w-full bg-gray-900 border border-gray-700 rounded-lg pl-10 pr-4 py-3 text-white focus:border-fruti focus:outline-none transition" placeholder="••••••••" required>
+                </div>
+            </div>
+            <button type="submit" id="btn-login" class="w-full bg-fruti hover:bg-red-600 text-white font-black py-3 rounded-lg mt-4 transition shadow-[0_0_15px_rgba(255,77,77,0.3)]">
+                INGRESAR AL SISTEMA
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // 🛑 LA CURA DEL BUCLE INFINITO: Borramos la memoria apenas cargas esta página.
+        localStorage.clear();
+
+        async function iniciarSesion(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const btn = document.getElementById('btn-login');
+
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Conectando...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('http://localhost:3000/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    // Guardar datos de sesión limpios y correctos
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('role', data.role);
+                    if(data.nombre) localStorage.setItem('nombre', data.nombre);
+
+                    Swal.fire({
+                        icon: 'success', title: 'Acceso Concedido',
+                        text: 'Redirigiendo a tu panel...', timer: 1000,
+                        showConfirmButton: false, background: '#1f2937', color: '#fff'
+                    }).then(() => {
+                        window.location.href = data.redirect; // Te enviará a /admin o /creador según tu rol
+                    });
+                } else {
+                    throw new Error(data.error || 'Credenciales incorrectas');
+                }
+            } catch (error) {
+                Swal.fire({ icon: 'error', title: 'Acceso Denegado', text: error.message, background: '#1f2937', color: '#fff' });
+                btn.innerHTML = 'INGRESAR AL SISTEMA';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

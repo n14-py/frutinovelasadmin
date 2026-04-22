@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Editar Serie - Frutinovelas</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .tabs { display: flex; border-bottom: 1px solid #333; margin-bottom: 20px; }
+        .tab { flex: 1; padding: 15px; text-align: center; color: var(--grey); cursor: pointer; font-weight: bold; }
+        .tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+        .section-content { display: none; }
+        .section-content.active { display: block; }
+        .epi-card { background: #181818; padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #333; }
+        .epi-info h4 { margin: 0; font-size: 16px; display: flex; align-items: center; gap: 8px;}
+        .epi-info p { margin: 5px 0 0; font-size: 12px; color: var(--grey); }
+        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 2000; }
+        .badge-cola { background: #8b5cf6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+        .badge-error { background: #ef4444; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+        .badge-ok { background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header style="display: flex; align-items: center; gap: 10px;">
+            <a href="mis-series.html" style="color: white;"><i class="material-icons">arrow_back</i></a>
+            <h1 id="header-title" style="font-size: 20px;">Cargando...</h1>
+        </header>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('info')">INFORMACIÓN</div>
+            <div class="tab" onclick="switchTab('episodios')">EPISODIOS</div>
+        </div>
+
+        <div id="info" class="section-content active">
+            <div class="form-group">
+                <label>Título</label>
+                <input type="text" id="edit-title">
+            </div>
+            <div class="form-group">
+                <label>URL Portada</label>
+                <input type="url" id="edit-imageUrl">
+            </div>
+            <div class="form-group">
+                <label>Descripción</label>
+                <textarea id="edit-description"></textarea>
+            </div>
+            <button class="btn-save" id="btn-update-serie">GUARDAR CAMBIOS</button>
+        </div>
+
+        <div id="episodios" class="section-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin:0;">Lista de Capítulos</h3>
+                <button onclick="openModal()" style="background: var(--primary); border:none; color:white; padding:8px 12px; border-radius:8px; font-weight:bold;">+ AÑADIR</button>
+            </div>
+            
+            <div id="episodes-list"></div>
+        </div>
+    </div>
+
+    <div id="epi-modal" class="modal">
+        <div style="background: #1e1e1e; width: 100%; max-width: 400px; padding: 20px; border-radius: 15px;">
+            <h2 style="margin-top:0;">Nuevo Episodio (A Cola)</h2>
+            <div class="form-group">
+                <label>Número de Capítulo</label>
+                <input type="number" id="epi-num" placeholder="Ej: 1">
+            </div>
+            <div class="form-group">
+                <label>Título del Episodio</label>
+                <input type="text" id="epi-title" placeholder="Ej: El inicio de todo">
+            </div>
+            <div class="form-group">
+                <label>Archivo de Video (MP4/MOV)</label>
+                <input type="file" id="epi-file" accept="video/mp4,video/mov" style="background:#333; padding:10px; border-radius:8px; width:100%;">
+            </div>
+            <div class="form-group">
+                <label>Precio en Monedas (0 = Gratis)</label>
+                <input type="number" id="epi-price" value="0">
+            </div>
+            <div style="display: flex; gap: 10px; margin-top:20px;">
+                <button onclick="closeModal()" style="flex:1; background:#333; color:white; border:none; padding:15px; border-radius:10px;">CANCELAR</button>
+                <button id="btn-save-epi" style="flex:1; background:var(--primary); color:white; border:none; padding:15px; border-radius:10px; font-weight:bold;">ENCOLAR</button>
+            </div>
+            <p id="upload-status" style="display:none; text-align:center; margin-top:10px; color:#10b981; font-weight:bold; font-size:12px;">Subiendo archivo...</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc, collection, getDocs, query, orderBy, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // NOTA: Idealmente Firebase debe sacarse del cliente, pero se mantiene la lectura para compatibilidad.
+        const firebaseConfig = { projectId: "frutinovelas-b564c" };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const API_URL = 'http://localhost:3000/api';
+        const token = localStorage.getItem('token');
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const serieId = urlParams.get('id');
+
+        if (!serieId) window.location.href = "mis-series.html";
+
+        async function loadSerieData() {
+            const docRef = doc(db, "novelas", serieId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                document.getElementById('header-title').innerText = data.title;
+                document.getElementById('edit-title').value = data.title || data.titulo;
+                document.getElementById('edit-imageUrl').value = data.imageUrl || data.portadaUrl;
+                document.getElementById('edit-description').value = data.description || data.descripcion;
+            }
+            loadEpisodes();
+        }
+
+        async function loadEpisodes() {
+            const epiContainer = document.getElementById('episodes-list');
+            const q = query(collection(db, "novelas", serieId, "episodios"), orderBy("numero", "asc"));
+            const querySnapshot = await getDocs(q);
+            
+            epiContainer.innerHTML = "";
+            querySnapshot.forEach((docEpi) => {
+                const epi = docEpi.data();
+                
+                // Mostrar estado de la cola
+                let statusBadge = `<span class="badge-ok">Publicado</span>`;
+                if(epi.estadoProceso === 'en_cola') statusBadge = `<span class="badge-cola">En Cola</span>`;
+                if(epi.estadoProceso === 'procesando') statusBadge = `<span class="badge-cola" style="background:#f59e0b">Renderizando</span>`;
+                if(epi.estadoProceso === 'error') statusBadge = `<span class="badge-error">Error</span>`;
+
+                epiContainer.innerHTML += `
+                    <div class="epi-card">
+                        <div class="epi-info">
+                            <h4>Cap. ${epi.numero}: ${epi.tituloEpisodio} ${statusBadge}</h4>
+                            <p>${epi.precio == 0 ? 'Gratis' : epi.precio + ' Monedas'}</p>
+                        </div>
+                        <button onclick="deleteEpisode('${docEpi.id}')" style="background:none; border:none; color:#ff4d4d;"><i class="material-icons">delete</i></button>
+                    </div>
+                `;
+            });
+        }
+
+        document.getElementById('btn-update-serie').onclick = async () => {
+            await updateDoc(doc(db, "novelas", serieId), {
+                title: document.getElementById('edit-title').value,
+                titulo: document.getElementById('edit-title').value,
+                portadaUrl: document.getElementById('edit-imageUrl').value,
+                descripcion: document.getElementById('edit-description').value
+            });
+            alert("Información actualizada");
+        };
+
+        // ENVIAR NUEVO VIDEO A LA COLA ASÍNCRONA
+        document.getElementById('btn-save-epi').onclick = () => {
+            const num = document.getElementById('epi-num').value;
+            const title = document.getElementById('epi-title').value;
+            const price = document.getElementById('epi-price').value;
+            const file = document.getElementById('epi-file').files[0];
+            
+            if(!num || !title || !file) return alert("Llena todos los campos y selecciona un video.");
+
+            document.getElementById('btn-save-epi').disabled = true;
+            document.getElementById('upload-status').style.display = 'block';
+
+            const formData = new FormData();
+            formData.append('video', file);
+            formData.append('serieId', serieId);
+            formData.append('numeroEpisodio', num);
+            formData.append('tituloEpisodio', title);
+            formData.append('precio', price);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', `${API_URL}/media/queue-video`, true);
+            xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+            xhr.onload = function() {
+                document.getElementById('btn-save-epi').disabled = false;
+                document.getElementById('upload-status').style.display = 'none';
+
+                if (xhr.status === 200) {
+                    alert("Video enviado a la cola del servidor exitosamente.");
+                    closeModal();
+                    loadEpisodes();
+                } else {
+                    alert("Error al enviar video a la cola.");
+                }
+            };
+            xhr.send(formData);
+        };
+
+        window.switchTab = (tabId) => {
+            document.querySelectorAll('.tab, .section-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        };
+        window.openModal = () => document.getElementById('epi-modal').style.display = 'flex';
+        window.closeModal = () => document.getElementById('epi-modal').style.display = 'none';
+        window.deleteEpisode = async (id) => {
+            if(confirm("¿Borrar este capítulo?")) {
+                await deleteDoc(doc(db, "novelas", serieId, "episodios", id));
+                loadEpisodes();
+            }
+        };
+
+        loadSerieData();
+    </script>
+</body>
+</html>

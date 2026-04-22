@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin | Marketing Push</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class', theme: { extend: { colors: { fruti: '#FF4D4D', panel: '#1f2937' } } } }</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f1219; }
+        ::-webkit-scrollbar-thumb { background: #FF4D4D; border-radius: 10px; }
+        .glass-panel { background: rgba(31, 41, 55, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); }
+        
+        /* Animación Radar */
+        @keyframes radar { 
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+        .radar-pulse::after {
+            content: ''; position: absolute; inset: 0; border-radius: 50%;
+            border: 2px solid #FF4D4D; animation: radar 2s infinite ease-out; z-index: -1;
+        }
+    </style>
+</head>
+<body class="bg-[#0f1219] text-white h-screen flex overflow-hidden font-sans selection:bg-fruti selection:text-white">
+
+    <div id="mobile-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden lg:hidden transition-opacity"></div>
+
+    <aside id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full lg:relative lg:translate-x-0 w-72 bg-gray-900 border-r border-gray-800 flex flex-col justify-between shadow-2xl z-50 transition-transform duration-300 ease-in-out">
+        <div class="overflow-y-auto h-full">
+            <div class="p-6 flex items-center justify-between border-b border-gray-800 sticky top-0 bg-gray-900 z-10">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-fruti p-2.5 rounded-xl shadow-[0_0_20px_rgba(255,77,77,0.4)]">
+                        <i class="fa-solid fa-crown text-white text-xl"></i>
+                    </div>
+                    <h1 class="text-xl font-black tracking-widest text-white leading-tight">FRUTI<span class="text-fruti">ADMIN</span></h1>
+                </div>
+                <button onclick="toggleSidebar()" class="lg:hidden text-gray-400 hover:text-white text-2xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <nav class="p-4 space-y-1.5 mt-2">
+                <p class="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-3 px-4">Panel Central</p>
+                <a href="index.html" class="w-full flex items-center space-x-3 px-4 py-3.5 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl transition-all font-medium">
+                    <i class="fa-solid fa-chart-line w-5 text-lg"></i> <span>Dashboard General</span>
+                </a>
+                <a href="usuarios.html" class="w-full flex items-center space-x-3 px-4 py-3.5 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl transition-all font-medium">
+                    <i class="fa-solid fa-mobile-screen-button w-5 text-lg"></i> <span>Usuarios Móviles</span>
+                </a>
+                <a href="creadores.html" class="w-full flex items-center space-x-3 px-4 py-3.5 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl transition-all font-medium">
+                    <i class="fa-solid fa-video w-5 text-lg"></i> <span>Creadores (Socios)</span>
+                </a>
+                <a href="contenido.html" class="w-full flex items-center space-x-3 px-4 py-3.5 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl transition-all font-medium">
+                    <i class="fa-solid fa-clapperboard w-5 text-lg"></i> <span>Moderación de Series</span>
+                </a>
+
+                <p class="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-3 mt-8 px-4">Administración</p>
+                <a href="finanzas.html" class="w-full flex items-center space-x-3 px-4 py-3.5 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl transition-all font-medium">
+                    <i class="fa-solid fa-building-columns w-5 text-lg"></i> <span>Finanzas y Pagos</span>
+                </a>
+                <a href="marketing.html" class="w-full flex items-center space-x-3 px-4 py-3.5 bg-fruti/10 text-fruti border-r-4 border-fruti rounded-l-xl transition-all font-bold">
+                    <i class="fa-solid fa-bullhorn w-5 text-lg"></i> <span>Marketing (Push)</span>
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <header class="lg:hidden flex items-center justify-between p-4 bg-gray-900 border-b border-gray-800 z-20">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-crown text-fruti"></i>
+                <span class="font-bold tracking-widest">FRUTINOVELAS</span>
+            </div>
+            <button onclick="toggleSidebar()" class="text-white text-2xl focus:outline-none"><i class="fa-solid fa-bars"></i></button>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 lg:p-8 relative z-10 flex items-center justify-center">
+            
+            <div class="max-w-2xl w-full relative">
+                <div class="absolute -top-20 -right-20 w-72 h-72 bg-fruti/20 rounded-full blur-[100px] pointer-events-none -z-10"></div>
+                <div class="absolute -bottom-20 -left-20 w-72 h-72 bg-blue-600/10 rounded-full blur-[100px] pointer-events-none -z-10"></div>
+
+                <div class="text-center mb-10">
+                    <div class="relative inline-block radar-pulse mb-6">
+                        <div class="bg-gray-800 border border-gray-700 w-24 h-24 rounded-full flex justify-center items-center relative z-10 shadow-2xl">
+                            <i class="fa-solid fa-satellite-dish text-fruti fa-3x"></i>
+                        </div>
+                    </div>
+                    <h2 class="text-3xl lg:text-4xl font-black tracking-tight">Transmisor Global Push</h2>
+                    <p class="text-gray-400 mt-2 text-sm lg:text-base px-6">Envía una alerta directa a la pantalla de bloqueo de todos los celulares que tengan Frutinovelas instalada.</p>
+                </div>
+
+                <div class="glass-panel p-6 lg:p-10 rounded-3xl border border-gray-800 shadow-2xl relative">
+                    
+                    <form id="pushForm" onsubmit="enviarPushGlobal(event)">
+                        
+                        <div class="mb-6">
+                            <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Título de la Notificación <span class="text-fruti">*</span></label>
+                            <input type="text" id="push-titulo" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-4 text-white focus:border-fruti focus:ring-1 focus:ring-fruti focus:outline-none transition shadow-inner font-bold text-lg" placeholder="Ej: ¡Nuevo estreno exclusivo!" required>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Mensaje Principal <span class="text-fruti">*</span></label>
+                            <textarea id="push-mensaje" rows="3" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-4 text-white focus:border-fruti focus:ring-1 focus:ring-fruti focus:outline-none transition shadow-inner resize-none" placeholder="Ej: Entra ahora para ver los primeros 3 capítulos totalmente gratis." required></textarea>
+                        </div>
+                        
+                        <div class="mb-8">
+                            <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">URL de Imagen (Opcional - Para Notificación Expandida)</label>
+                            <div class="flex items-center bg-gray-900 border border-gray-700 rounded-xl overflow-hidden focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition shadow-inner">
+                                <span class="px-5 text-gray-500 bg-gray-800/50 border-r border-gray-700 h-full py-4"><i class="fa-solid fa-image"></i></span>
+                                <input type="url" id="push-imagen" class="w-full bg-transparent p-4 text-white focus:outline-none text-sm" placeholder="https://ejemplo.com/banner.jpg">
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-fruti hover:bg-red-600 font-black text-white py-5 rounded-xl text-lg tracking-wider uppercase transition shadow-[0_0_20px_rgba(255,77,77,0.3)] hover:shadow-[0_0_30px_rgba(255,77,77,0.6)] transform hover:-translate-y-1 relative overflow-hidden group">
+                            <div class="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:animate-[shine_1s_ease-out]"></div>
+                            <i class="fa-solid fa-paper-plane mr-2"></i> Lanzar Satélite
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        @keyframes shine {
+            100% { transform: translateX(100%); }
+        }
+    </style>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api/admin';
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '/login';
+        const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            document.getElementById('mobile-overlay').classList.toggle('hidden');
+        }
+
+        async function enviarPushGlobal(e) {
+            e.preventDefault();
+            const titulo = document.getElementById('push-titulo').value;
+            const mensaje = document.getElementById('push-mensaje').value;
+            const imagenUrl = document.getElementById('push-imagen').value;
+
+            const res = await Swal.fire({
+                title: '¿Confirmar Lanzamiento?', text: "La notificación vibrará en miles de dispositivos móviles.",
+                icon: 'warning', showCancelButton: true, confirmButtonColor: '#FF4D4D', confirmButtonText: 'Sí, Lanzar ahora', background: '#1f2937', color: '#fff'
+            });
+
+            if(res.isConfirmed) {
+                Swal.fire({ title: 'Transmitiendo señal...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#1f2937', color: '#fff' });
+                try {
+                    const resp = await fetch(`${API_URL}/marketing/push`, { method: 'POST', headers, body: JSON.stringify({ titulo, mensaje, imagenUrl }) });
+                    if(resp.ok) {
+                        Swal.fire({ icon: 'success', title: 'Impacto Confirmado', text: 'La notificación ha sido entregada a la red FCM de Firebase.', background: '#1f2937', color: '#fff' });
+                        e.target.reset();
+                    } else throw new Error();
+                } catch (error) { 
+                    Swal.fire({icon: 'error', title: 'Fallo de Transmisión', text: 'Revise que Firebase Cloud Messaging esté configurado correctamente.', background: '#1f2937', color: '#fff'}); 
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator Studio | Mis Series</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class', theme: { extend: { colors: { fruti: '#FF4D4D', panel: '#1f2937' } } } }</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f1219; }
+        ::-webkit-scrollbar-thumb { background: #FF4D4D; border-radius: 10px; }
+        .glass-panel { background: rgba(31, 41, 55, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.05); }
+    </style>
+</head>
+<body class="bg-[#0f1219] text-white h-screen flex overflow-hidden font-sans selection:bg-fruti selection:text-white">
+
+    <div id="mobile-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden lg:hidden transition-opacity"></div>
+
+    <aside id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full lg:relative lg:translate-x-0 w-72 bg-gray-900 border-r border-gray-800 flex flex-col justify-between shadow-2xl z-50 transition-transform duration-300 ease-in-out">
+        <div class="overflow-y-auto h-full">
+            <div class="p-6 flex items-center justify-between border-b border-gray-800 sticky top-0 bg-gray-900 z-10">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-gradient-to-br from-fruti to-orange-500 p-2.5 rounded-xl shadow-[0_0_20px_rgba(255,77,77,0.4)]">
+                        <i class="fa-solid fa-clapperboard text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-black tracking-widest text-white leading-tight">STUDIO</h1>
+                        <p class="text-[10px] text-green-400 font-bold uppercase tracking-widest" id="creador-nombre">Cargando...</p>
+                    </div>
+                </div>
+                <button onclick="toggleSidebar()" class="lg:hidden text-gray-400 hover:text-white text-2xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <nav class="p-4 space-y-1.5 mt-2">
+                <p class="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-3 px-4">Panel de Control</p>
+                <a href="index.html" class="w-full flex items-center space-x-3 px-4 py-3.5 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl transition-all font-medium">
+                    <i class="fa-solid fa-chart-pie w-5 text-lg"></i> <span>Mi Rendimiento</span>
+                </a>
+                <a href="mis-series.html" class="w-full flex items-center space-x-3 px-4 py-3.5 bg-fruti/10 text-fruti border-r-4 border-fruti rounded-l-xl transition-all font-bold">
+                    <i class="fa-solid fa-list w-5 text-lg"></i> <span>Mis Series</span>
+                </a>
+                <a href="nueva-serie.html" class="w-full flex items-center space-x-3 px-4 py-3.5 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl transition-all font-medium">
+                    <i class="fa-solid fa-cloud-arrow-up w-5 text-lg"></i> <span>Subir Nueva Serie</span>
+                </a>
+                <a href="finanzas.html" class="w-full flex items-center space-x-3 px-4 py-3.5 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl transition-all font-medium">
+                    <i class="fa-solid fa-wallet w-5 text-lg"></i> <span>Mis Ganancias</span>
+                </a>
+            </nav>
+        </div>
+        <div class="p-5 border-t border-gray-800 bg-gray-900/80 backdrop-blur">
+            <button onclick="cerrarSesion()" class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gray-800 hover:bg-red-500 text-gray-300 hover:text-white border border-gray-700 hover:border-red-500 rounded-xl transition-all text-sm font-bold group">
+                <i class="fa-solid fa-power-off group-hover:rotate-180 transition-transform duration-300"></i> <span>Cerrar Sesión</span>
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <header class="lg:hidden flex items-center justify-between p-4 bg-gray-900 border-b border-gray-800 z-20">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-crown text-fruti"></i>
+                <span class="font-bold tracking-widest">FRUTINOVELAS</span>
+            </div>
+            <button onclick="toggleSidebar()" class="text-white text-2xl focus:outline-none"><i class="fa-solid fa-bars"></i></button>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 lg:p-8 relative z-10">
+            <div class="flex flex-col lg:flex-row lg:justify-between lg:items-end mb-8 gap-4">
+                <div>
+                    <h2 class="text-2xl lg:text-3xl font-black tracking-tight">Mi Biblioteca de Contenido</h2>
+                    <p class="text-gray-400 mt-1 text-xs lg:text-sm">Revisa el estado de aprobación y el impacto de tus obras.</p>
+                </div>
+                <a href="nueva-serie.html" class="w-full lg:w-auto bg-fruti hover:bg-red-600 text-white px-6 py-3.5 rounded-xl font-bold shadow-[0_0_15px_rgba(255,77,77,0.4)] transition transform hover:-translate-y-1 text-center whitespace-nowrap">
+                    <i class="fa-solid fa-plus mr-2"></i> Crear Nueva Serie
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="grid-series">
+                <div class="col-span-full text-center py-20 text-gray-500" id="loader">
+                    <i class="fa-solid fa-circle-notch fa-spin fa-3x mb-4 text-fruti"></i>
+                    <p class="text-sm font-bold tracking-widest uppercase">Cargando catálogo...</p>
+                </div>
+                
+                <div class="col-span-full text-center py-20 text-gray-500 hidden" id="empty-state">
+                    <i class="fa-solid fa-film fa-4x mb-4 opacity-30"></i>
+                    <p class="text-xl font-black">Aún no has creado ninguna serie.</p>
+                    <p class="text-sm mt-2">Sube tu primer proyecto y empieza a ganar dinero.</p>
+                    <a href="nueva-serie.html" class="inline-block mt-6 bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-bold transition border border-gray-700">Subir Serie Ahora</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api/creador';
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '/login';
+        
+        document.getElementById('creador-nombre').innerText = localStorage.getItem('nombre') || 'Creador';
+        const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            document.getElementById('mobile-overlay').classList.toggle('hidden');
+        }
+
+        async function cargarMisSeries() {
+            try {
+                const res = await fetch(`${API_URL}/mis-novelas`, { headers });
+                const series = await res.json();
+                
+                const grid = document.getElementById('grid-series');
+                const loader = document.getElementById('loader');
+                const emptyState = document.getElementById('empty-state');
+
+                loader.classList.add('hidden');
+
+                if(series.length === 0) {
+                    emptyState.classList.remove('hidden');
+                    return;
+                }
+
+                grid.innerHTML = series.map(s => {
+                    let badge = '';
+                    let border = 'border-gray-800 hover:border-gray-600';
+                    
+                    if(s.estado === 'aprobado') {
+                        badge = `<span class="bg-green-500/90 backdrop-blur text-white text-[10px] font-black px-3 py-1 rounded-md shadow-lg uppercase tracking-wider"><i class="fa-solid fa-check mr-1"></i> Pública</span>`;
+                        border = 'border-green-900/30 hover:border-green-500/50';
+                    } else if(s.estado === 'rechazado') {
+                        badge = `<span class="bg-red-500/90 backdrop-blur text-white text-[10px] font-black px-3 py-1 rounded-md shadow-lg uppercase tracking-wider"><i class="fa-solid fa-xmark mr-1"></i> Rechazada</span>`;
+                        border = 'border-red-900/30 hover:border-red-500/50';
+                    } else {
+                        badge = `<span class="bg-yellow-500/90 backdrop-blur text-black text-[10px] font-black px-3 py-1 rounded-md shadow-lg uppercase tracking-wider animate-pulse"><i class="fa-solid fa-clock mr-1"></i> En Revisión</span>`;
+                        border = 'border-yellow-900/30 hover:border-yellow-500/50';
+                    }
+
+                    return `
+                    <div class="glass-panel rounded-2xl overflow-hidden shadow-xl border ${border} flex flex-col transition-all duration-300 group">
+                        <div class="h-64 w-full bg-gray-800 relative overflow-hidden">
+                            <img src="${s.portadaUrl || 'https://via.placeholder.com/400x600?text=Sin+Portada'}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent opacity-90"></div>
+                            <div class="absolute top-3 left-3 z-10">${badge}</div>
+                            
+                            <div class="absolute bottom-4 left-4 right-4 z-10">
+                                <h3 class="text-lg font-black text-white leading-tight drop-shadow-md line-clamp-2">${s.title || s.titulo}</h3>
+                            </div>
+                        </div>
+                        <div class="p-4 flex-1 flex flex-col bg-gray-900/50">
+                            <div class="flex justify-between items-center mt-auto">
+                                <div class="text-left">
+                                    <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-1">Vistas Totales</p>
+                                    <p class="text-white text-sm font-bold"><i class="fa-solid fa-eye text-fruti mr-1"></i> ${(s.vistasTotales || 0).toLocaleString()}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-1">Generado</p>
+                                    <p class="text-green-400 text-sm font-black">$${(s.ingresosGenerados || 0).toFixed(2)}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('');
+            } catch (e) { Swal.fire('Error de Red', 'Fallo al cargar tus series.', 'error'); }
+        }
+
+        function cerrarSesion() { localStorage.clear(); window.location.href = '/login'; }
+        window.onload = cargarMisSeries;
+    </script>
+</body>
+</html>

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator Studio | Subir Serie</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class', theme: { extend: { colors: { fruti: '#FF4D4D', panel: '#1f2937' } } } }</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f1219; }
+        ::-webkit-scrollbar-thumb { background: #FF4D4D; border-radius: 10px; }
+        .glass-panel { background: rgba(31, 41, 55, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.05); }
+        .progress-bar-bg { background-color: #374151; border-radius: 9999px; overflow: hidden; height: 8px; width: 100%; margin-top: 8px; display: none; }
+        .progress-bar-fill { background-color: #10b981; height: 100%; width: 0%; transition: width 0.2s ease; }
+        .status-badge { font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+</head>
+<body class="bg-[#0f1219] text-white h-screen flex overflow-hidden font-sans selection:bg-fruti selection:text-white">
+
+    <div id="mobile-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden lg:hidden transition-opacity"></div>
+
+    <aside id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full lg:relative lg:translate-x-0 w-72 bg-gray-900 border-r border-gray-800 flex flex-col justify-between shadow-2xl z-50 transition-transform duration-300 ease-in-out">
+        <div class="overflow-y-auto h-full">
+            <div class="p-6 flex items-center justify-between border-b border-gray-800 sticky top-0 bg-gray-900 z-10">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-gradient-to-br from-fruti to-orange-500 p-2.5 rounded-xl shadow-[0_0_20px_rgba(255,77,77,0.4)]">
+                        <i class="fa-solid fa-clapperboard text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-black tracking-widest text-white leading-tight">STUDIO</h1>
+                        <p class="text-[10px] text-green-400 font-bold uppercase tracking-widest" id="creador-nombre">Cargando...</p>
+                    </div>
+                </div>
+                <button onclick="toggleSidebar()" class="lg:hidden text-gray-400 hover:text-white text-2xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <nav class="p-4 space-y-1.5 mt-2">
+                <p class="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-3 px-4">Panel de Control</p>
+                <a href="index.html" class="w-full flex items-center space-x-3 px-4 py-3.5 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl transition-all font-medium">
+                    <i class="fa-solid fa-chart-pie w-5 text-lg"></i> <span>Mi Rendimiento</span>
+                </a>
+                <a href="mis-series.html" class="w-full flex items-center space-x-3 px-4 py-3.5 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl transition-all font-medium">
+                    <i class="fa-solid fa-list w-5 text-lg"></i> <span>Mis Series</span>
+                </a>
+                <a href="nueva-serie.html" class="w-full flex items-center space-x-3 px-4 py-3.5 bg-fruti/10 text-fruti border-r-4 border-fruti rounded-l-xl transition-all font-bold">
+                    <i class="fa-solid fa-cloud-arrow-up w-5 text-lg"></i> <span>Subir Nueva Serie</span>
+                </a>
+                <a href="finanzas.html" class="w-full flex items-center space-x-3 px-4 py-3.5 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl transition-all font-medium">
+                    <i class="fa-solid fa-wallet w-5 text-lg"></i> <span>Mis Ganancias</span>
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <header class="lg:hidden flex items-center justify-between p-4 bg-gray-900 border-b border-gray-800 z-20">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-crown text-fruti"></i>
+                <span class="font-bold tracking-widest">FRUTINOVELAS</span>
+            </div>
+            <button onclick="toggleSidebar()" class="text-white text-2xl focus:outline-none"><i class="fa-solid fa-bars"></i></button>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 lg:p-8 relative z-10">
+            <div class="max-w-4xl mx-auto pb-10">
+                <h2 class="text-2xl lg:text-3xl font-black tracking-tight mb-6 flex items-center">
+                    Crear Nueva Serie 
+                    <span class="bg-blue-600 text-white text-[10px] uppercase font-bold px-2 py-1 rounded ml-3 shadow-lg"><i class="fa-solid fa-bolt mr-1"></i> Async Queue V14</span>
+                </h2>
+                
+                <div class="glass-panel p-6 lg:p-8 rounded-2xl border border-gray-800 mb-8 shadow-2xl">
+                    <h3 class="text-lg font-bold mb-5 text-fruti border-b border-gray-700 pb-3 flex items-center"><i class="fa-solid fa-circle-info mr-2"></i> 1. Información General</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Título de la Serie <span class="text-fruti">*</span></label>
+                            <input type="text" id="serie-titulo" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3.5 text-white focus:border-fruti focus:ring-1 focus:ring-fruti outline-none transition font-bold" placeholder="Ej: Amor en la oficina">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Descripción Corta</label>
+                            <textarea id="serie-desc" rows="3" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3.5 text-white focus:border-fruti focus:ring-1 focus:ring-fruti outline-none transition resize-none text-sm" placeholder="¿De qué trata?"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-900/50 p-4 rounded-xl border border-gray-800">
+                        <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Portada Oficial (Opcional - Se extrae del Episodio 1 si está vacía)</label>
+                        <div class="flex flex-col md:flex-row md:items-center gap-3">
+                            <input type="file" id="serie-portada" accept="image/*" class="text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-gray-800 file:text-white hover:file:bg-gray-700 w-full md:w-auto transition cursor-pointer">
+                            <button onclick="subirPortadaUnica()" id="btn-portada" class="bg-blue-600/20 text-blue-400 border border-blue-600/50 hover:bg-blue-600 hover:text-white px-5 py-2 rounded-lg text-sm font-bold transition shadow-lg w-full md:w-auto whitespace-nowrap"><i class="fa-solid fa-upload mr-2"></i>Subir Portada</button>
+                        </div>
+                        <div class="progress-bar-bg" id="progreso-portada-bg"><div class="progress-bar-fill" id="progreso-portada-fill"></div></div>
+                        <input type="hidden" id="url-portada-final">
+                        <p id="txt-portada-ok" class="text-green-400 text-xs mt-3 hidden font-bold tracking-wider"><i class="fa-solid fa-check-circle mr-1"></i> Portada asegurada en el servidor</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-6 lg:p-8 rounded-2xl border border-gray-800 shadow-2xl mb-8">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-gray-700 pb-3 gap-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-fruti flex items-center"><i class="fa-solid fa-list-ol mr-2"></i> 2. Gestor de Episodios</h3>
+                            <p class="text-xs text-gray-400 mt-1">Selecciona los videos. El servidor los procesará en segundo plano.</p>
+                        </div>
+                        <button onclick="agregarFilaEpisodio()" class="bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-lg w-full md:w-auto"><i class="fa-solid fa-plus mr-2"></i>Añadir Episodio</button>
+                    </div>
+
+                    <div id="lista-episodios" class="space-y-4">
+                        </div>
+                </div>
+
+                <div class="flex justify-end">
+                    <button id="btn-publicar-todo" onclick="publicarSerieAsincrona()" class="w-full md:w-auto bg-fruti hover:bg-red-600 text-white px-10 py-4 rounded-xl font-black text-lg shadow-[0_0_20px_rgba(255,77,77,0.4)] transition transform hover:-translate-y-1 uppercase tracking-widest flex items-center justify-center group">
+                        <i class="fa-solid fa-cloud-arrow-up mr-2 group-hover:animate-bounce"></i> PUBLICAR Y ENCOLAR
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api'; // Cambia esto por tu dominio en producción
+        const token = localStorage.getItem('token');
+        const nombreCreador = localStorage.getItem('nombre') || 'Creador';
+        if (!token) window.location.href = '/login';
+        
+        document.getElementById('creador-nombre').innerText = nombreCreador;
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            document.getElementById('mobile-overlay').classList.toggle('hidden');
+        }
+
+        let contadorEpisodios = 0;
+        let episodiosData = []; 
+
+        function agregarFilaEpisodio() {
+            contadorEpisodios++;
+            const id = contadorEpisodios;
+            episodiosData.push({ id: id, titulo: `Episodio ${id}` });
+
+            // Ya no hay botón de subir individual. Se selecciona el archivo y listo.
+            const html = `
+                <div class="bg-gray-900/80 border border-gray-700 p-5 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-inner relative overflow-hidden" id="epi-row-${id}">
+                    <div class="flex-1 w-full relative z-10">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <span class="bg-gray-800 text-gray-400 border border-gray-700 px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest">EPI ${id}</span>
+                            <input type="text" id="titulo-epi-${id}" value="Episodio ${id}" class="bg-transparent border-b border-gray-600 text-white focus:border-fruti focus:outline-none w-full text-sm py-1 font-bold transition" onchange="actualizarTituloEpi(${id}, this.value)">
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                            <input type="file" id="file-epi-${id}" accept="video/mp4,video/mov" class="text-xs text-gray-500 file:mr-4 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:font-bold file:bg-gray-800 file:text-white w-full cursor-pointer hover:file:bg-gray-700 transition">
+                            <div class="flex items-center space-x-2">
+                                <label class="text-[10px] font-bold text-gray-400 uppercase">Precio:</label>
+                                <input type="number" id="precio-epi-${id}" value="${id > 3 ? 20 : 0}" class="bg-gray-800 text-white text-xs w-16 p-1 rounded text-center border border-gray-600 focus:outline-none">
+                            </div>
+                        </div>
+                        <div class="progress-bar-bg mt-3" id="progreso-bg-${id}"><div class="progress-bar-fill" id="progreso-fill-${id}"></div></div>
+                        <p id="txt-status-${id}" class="text-gray-400 text-[10px] mt-2 hidden font-black tracking-widest uppercase"></p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 w-full md:w-auto relative z-10">
+                        <button onclick="eliminarEpisodio(${id})" class="w-full sm:w-auto text-red-500 hover:text-red-400 bg-red-900/20 sm:bg-transparent border border-red-900/50 sm:border-transparent px-4 py-2.5 sm:p-0 rounded-lg text-xs font-bold transition"><i class="fa-solid fa-trash mr-1"></i> Quitar</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('lista-episodios').insertAdjacentHTML('beforeend', html);
+        }
+
+        function actualizarTituloEpi(id, nuevoTitulo) {
+            const epi = episodiosData.find(e => e.id === id);
+            if(epi) epi.titulo = nuevoTitulo;
+        }
+
+        function eliminarEpisodio(id) {
+            document.getElementById(`epi-row-${id}`).remove();
+            episodiosData = episodiosData.filter(e => e.id !== id);
+        }
+
+        function subirPortadaUnica() {
+            const file = document.getElementById('serie-portada').files[0];
+            if(!file) return;
+
+            const btn = document.getElementById('btn-portada');
+            const barBg = document.getElementById('progreso-portada-bg');
+            const barFill = document.getElementById('progreso-portada-fill');
+            const txtOk = document.getElementById('txt-portada-ok');
+
+            btn.disabled = true;
+            barBg.style.display = 'block';
+
+            const formData = new FormData();
+            formData.append('imagen', file);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', `${API_URL}/media/upload-image`, true);
+            xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+            xhr.upload.onprogress = (e) => {
+                if (e.lengthComputable) barFill.style.width = Math.round((e.loaded / e.total) * 100) + '%';
+            };
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const res = JSON.parse(xhr.responseText);
+                    document.getElementById('url-portada-final').value = res.imageUrl;
+                    btn.style.display = 'none';
+                    txtOk.style.display = 'block';
+                }
+            };
+            xhr.send(formData);
+        }
+
+        // =========================================================================
+        // NUEVO FLUJO: CREAR ESTRUCTURA -> ENVIAR A COLA ASÍNCRONA
+        // =========================================================================
+        async function publicarSerieAsincrona() {
+            const titulo = document.getElementById('serie-titulo').value.trim();
+            const desc = document.getElementById('serie-desc').value.trim();
+            const portada = document.getElementById('url-portada-final').value;
+            const btnMain = document.getElementById('btn-publicar-todo');
+
+            if(!titulo) return Swal.fire({icon:'warning', title:'Aviso', text:'Dale un nombre a tu serie.', background:'#1f2937', color:'#fff'});
+            if(episodiosData.length === 0) return Swal.fire({icon:'warning', title:'Aviso', text:'Añade episodios.', background:'#1f2937', color:'#fff'});
+
+            // Validar que todos los episodios tengan archivo seleccionado
+            for (let i = 0; i < episodiosData.length; i++) {
+                const epi = episodiosData[i];
+                const fileInput = document.getElementById(`file-epi-${epi.id}`);
+                if (!fileInput.files[0]) {
+                    return Swal.fire({icon:'error', title:'Videos Pendientes', text:`Falta seleccionar el video para: ${epi.titulo}`, background:'#1f2937', color:'#fff'});
+                }
+            }
+
+            btnMain.disabled = true;
+            btnMain.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> INICIANDO PROCESO...';
+
+            try {
+                // PASO 1: Crear la estructura en Firebase (Estado Pendiente)
+                Swal.fire({ title: 'Creando Estructura...', text: 'Registrando serie en la base de datos.', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#1f2937', color: '#fff' });
+
+                const resEstructura = await fetch(`${API_URL}/creador/novelas-estructura`, {
+                    method: 'POST', 
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ titulo, descripcion: desc, portadaUrl: portada })
+                });
+                
+                const dataEstructura = await resEstructura.json();
+                if(!resEstructura.ok) throw new Error(dataEstructura.error || 'Error creando estructura');
+                
+                const serieId = dataEstructura.id; // ID maestro para encolar los videos
+
+                // PASO 2: Iterar y Enviar videos a la Cola (Se hace 1 por 1 para no matar el navegador del usuario)
+                Swal.fire({ title: 'Subiendo Originales', text: 'Transfiriendo archivos al servidor de cola...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#1f2937', color: '#fff' });
+
+                for (let i = 0; i < episodiosData.length; i++) {
+                    const epi = episodiosData[i];
+                    await subirVideoACola(epi, serieId, i + 1);
+                }
+
+                // FIN DEL PROCESO
+                Swal.fire({ 
+                    icon: 'success', 
+                    title: '¡Misión Cumplida!', 
+                    html: 'Tus videos fueron enviados al servidor.<br><br><span class="text-xs text-gray-400">El servidor los procesará 1 a 1 en segundo plano. Ya puedes cerrar esta ventana.</span>', 
+                    background: '#1f2937', color: '#fff' 
+                }).then(() => window.location.href = 'mis-series.html');
+
+            } catch (error) { 
+                Swal.fire({icon:'error', title:'Error Crítico', text:error.message, background:'#1f2937', color:'#fff'}); 
+                btnMain.disabled = false;
+                btnMain.innerHTML = '<i class="fa-solid fa-cloud-arrow-up mr-2"></i> REINTENTAR';
+            }
+        }
+
+        // Función que envía el archivo crudo a `/api/media/queue-video`
+        function subirVideoACola(epi, serieId, numeroReal) {
+            return new Promise((resolve, reject) => {
+                const fileInput = document.getElementById(`file-epi-${epi.id}`);
+                const precioInput = document.getElementById(`precio-epi-${epi.id}`);
+                const file = fileInput.files[0];
+                
+                const barBg = document.getElementById(`progreso-bg-${epi.id}`);
+                const barFill = document.getElementById(`progreso-fill-${epi.id}`);
+                const txtStatus = document.getElementById(`txt-status-${epi.id}`);
+
+                barBg.style.display = 'block';
+                txtStatus.style.display = 'block';
+                txtStatus.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Subiendo al servidor...';
+                txtStatus.className = "text-blue-400 text-[10px] mt-2 font-black tracking-widest uppercase";
+
+                const formData = new FormData();
+                formData.append('video', file);
+                formData.append('serieId', serieId);
+                formData.append('numeroEpisodio', numeroReal);
+                formData.append('tituloEpisodio', epi.titulo);
+                formData.append('precio', precioInput.value || 0);
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', `${API_URL}/media/queue-video`, true);
+                xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+                xhr.upload.onprogress = function(e) {
+                    if (e.lengthComputable) {
+                        const porcentaje = Math.round((e.loaded / e.total) * 100);
+                        barFill.style.width = porcentaje + '%';
+                    }
+                };
+
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        barFill.style.backgroundColor = '#8b5cf6'; // Morado (En Cola)
+                        txtStatus.innerHTML = '<i class="fa-solid fa-clock mr-1"></i> EN COLA DE PROCESAMIENTO';
+                        txtStatus.className = "text-purple-400 text-[10px] mt-2 font-black tracking-widest uppercase";
+                        fileInput.style.display = 'none'; // Ocultar input para que quede limpio
+                        resolve();
+                    } else {
+                        barFill.style.backgroundColor = '#ef4444'; 
+                        txtStatus.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> ERROR DE SUBIDA';
+                        txtStatus.className = "text-red-400 text-[10px] mt-2 font-black tracking-widest uppercase";
+                        reject(new Error(`Fallo al subir ${epi.titulo}`));
+                    }
+                };
+
+                xhr.onerror = () => reject(new Error("Fallo de red al subir archivo."));
+                xhr.send(formData);
+            });
+        }
+
+        window.onload = () => agregarFilaEpisodio();
+    </script>
+</body>
+</html>
