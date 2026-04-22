@@ -33,6 +33,8 @@ const crypto = require('crypto');
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 const app = express();
 
+app.set('trust proxy', 1);
+
 // Sistema de Logs Avanzado
 class Logger {
     static getTimestamp() { return new Date().toISOString(); }
