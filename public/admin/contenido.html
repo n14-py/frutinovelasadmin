@@ -93,7 +93,7 @@
     </main>
 
     <script>
-        const API_URL = 'http://localhost:3000/api/admin';
+        const API_URL = '/api/admin';
         const token = localStorage.getItem('token');
         if (!token) window.location.href = '/login';
         const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };

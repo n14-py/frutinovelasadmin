@@ -96,7 +96,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        const API_URL = 'http://localhost:3000/api';
+        const API_URL = '/api';
         const token = localStorage.getItem('token');
         
         const urlParams = new URLSearchParams(window.location.search);
