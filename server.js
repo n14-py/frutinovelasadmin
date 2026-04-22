@@ -120,8 +120,8 @@ try {
     process.exit(1);
 
 
-};
-connectToFirebase();
+}
+
 
 // ============================================================================
 // 4. SISTEMA DE AUTORIZACIÓN Y ROLES AVANZADOS (JWT)
