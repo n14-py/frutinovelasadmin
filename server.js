@@ -112,7 +112,7 @@ try {
     }
     db = admin.firestore();
     messaging = admin.messaging();
-    logger.success("Conexión a Firebase Firestore establecida correctamente.");
+    Logger.success("Conexión a Firebase Firestore establecida correctamente.");
 } catch (e) {
     // Si falla aquí, es porque no hay variable ni archivo
     console.error("Fallo crítico al conectar con Firebase. Asegúrate de tener la variable FIREBASE_CREDENTIALS en Render o el archivo serviceAccountKey.json localmente.");
